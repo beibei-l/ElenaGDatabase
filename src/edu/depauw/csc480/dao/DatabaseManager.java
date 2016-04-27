@@ -22,7 +22,7 @@ import edu.depauw.csc480.model.Diagnosis;
 public class DatabaseManager {
     private Driver driver;
     private Connection conn;
-    private Patient patientDao;
+    private PatientDAO patientDAO;
     private VisitDAO visitDAO;
     private MedicationDAO medicationDAO;
     private DiagnosisDAO diagnosisDAO;

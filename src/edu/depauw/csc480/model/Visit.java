@@ -1,6 +1,7 @@
 package edu.depauw.csc480.model;
 
 import edu.depauw.csc480.dao.VisitDAO;
+import org.omg.CORBA.portable.ValueInputStream;
 
 /**
  * Model object for a row in the Course table.
@@ -12,46 +13,35 @@ import edu.depauw.csc480.dao.VisitDAO;
 public class Visit{
     private VisitDAO dao;
     private Patient patient;
-    private int visitID;
-    private int patientID;
+    private Visit visit;
     private String comments;
 
 
-    public Visit(CourseDAO dao, Visit visit, int visitID, int patientID, String comments) {
+    public Visit(VisitDAO dao, Visit visit, Patient patient, String comments) {
         this.dao = dao;
-        this.Patient = patient;
-        this.visitID = visitID;
-        this.patientID = patientID;
+        this.patient = patient;
+        this.visit = visit;
         this.comments = comments;
     }
 
+    // TODO: edit this method.
     public String toString() {
-        return dao + " " + visitID + ": " + patientID + ", " + " \n Comments:" + + comments;
+        return dao + " " + ", " + " \n Comments:" + comments;
     }
 
-    public String getVisitID() {
-        return visitID;
+    public Visit getVisit() {
+        return visit;
     }
 
-    public void setVisitID(String visit) {
-        this.visit = visit;
-        dao.changeVisit(visitID, patientID, Java.SQL.Date);
+    public Patient getPatient() {
+        return patient;
     }
 
-    public void setPatientID()
-    {
-        this.patientID = patientID;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
-    public patientId getPatientID() {
-        return patientID;
-    }
-
-    public void setComments()
-    { this.comments = comments;
-    }
-
-    public String Comments(){
+    public String getComments(){
         return comments;
     }
 
