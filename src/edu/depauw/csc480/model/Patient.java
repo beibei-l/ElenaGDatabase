@@ -15,8 +15,9 @@ public class Patient {
     private PatientDAO dao;
     private int patientID;
     private String pname;
-    private int demograhic;
     private String email;
+    private int demographic;
+
 
     public Patient(PatientDAO dao, int patientID, String pname, String email, int demographic) {
         this.dao = dao;
@@ -27,51 +28,45 @@ public class Patient {
     }
 
     public String toString() {
-        return pname + ", " + patientID + ", " + email + ", " + demographic;
+        return pname + ", " + email + ", " + demographic;
     }
 
-    public void setPname(int pname)
+    public int getPatientID(){
+        return patientID;
+    }
+
+    public void setPname(String pname)
     {
-        this.Pname = pname
+        this.pname = pname;
     }
 
     public String getPname() {
         return pname;
     }
 
-    public void setPatientID(int patientID) {
-        this.PatientID = patientID;
+    public void getEmail(String email) {
+        this.email = email;
     }
 
-    public int getPatientID()
-    { return patientID;
-    }
-
-    public void getEmail(String email)
-    {   this.Email = email;
-
-    }
-
-    public String getEmail()
-    {
+    public String getEmail() {
         return email;
     }
 
-    public void setVisit(Visit vis)
-    {
-        this.vis = vis;
-        dao.changeVisit(patientID, visitID);
-    }
-
-    public void getVisit(Visit vis)
-    {
-        Collection<Visits> getVisit()
-        {
-            if(courses == null) courses = dao.getVisits(visitID);
-            return visit;
-        }
-    }
-
+//    public void setVisit(Visit vis)
+//    {
+//        this.vis = vis;
+//        dao.changeVisit(patientID, visitID);
+//    }
+//
+//    public void getVisit(Visit vis)
+//    {
+//        Collection<Visits> getVisit()
+//        {
+//            if(courses == null) courses = dao.getVisits(visitID);
+//            return visit;
+//        }
+//    }
+    //TODO: Add address to the constructor?
     public int getAddress()
     {
         return address;
@@ -79,19 +74,22 @@ public class Patient {
 
     public void setAddress(String address)
     {
-        this.Address = address;
+        this.address = address;
     }
 
     public void setDemographic(int demographic)
-    {   this.Demographic = demographic;
+    {   this.demographic = demographic;
     }
 
     public int getDemographic()
-    {  return demographic;
+    {
+        return demographic;
     }
 
+    //TODO: Patient has Visits? Should I add to the Patient constructor?
     public Collection<Visit> getVisit() {
-        if (visit == null) courses = dao.getVisit(VisitID);
+        if (visit == null)
+            courses = dao.getVisit(VisitID);
         return visit;
     }
 }

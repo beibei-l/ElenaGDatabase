@@ -74,25 +74,27 @@ public class DatabaseManager {
         VisitDAO.addConstraints(conn);
         MedicationDAO.addConstraints(conn);
         DiagnosisDAO.addConstraints(conn);
-        con.commit();
+        conn.commit();
     }
 
     //***************************************************************
     // Data retrieval functions -- find a model object given its key
 
-    public Patient findPatient(int patientID, String pname, String address, String email) {
+    //TODO: Find the object using primary key (id), no need to put in any other parameters.
+    public Patient findPatient(int patientID) {
         return patientDAO.find(patientID);
     }
 
-    public Visit findVist(int visitID, int patientID, Java.SQL.date, Java.SQL.time, String comments) {
+    public Visit findVisit(int visitID) {
         return visitDAO.find(visitID);
     }
 
-    public Medication findMedication(int patientID, int medId, String med_name) {
-        return medicationAO.find(medID);
+    public Medication findMedication(int medId) {
+        return medicationDAO.find(medId);
     }
 
-    public Diagnosis findDiagnosisByName(int patientID, int diagnosisID, String dname) {
+    //TODO: need a find by name method in DiagnosisDao class.
+    public Diagnosis findDiagnosisByName(String dname) {
         return diagnosisDAO.findByName(dname);
     }
 
@@ -100,8 +102,10 @@ public class DatabaseManager {
     //***************************************************************
     // Data insertion functions -- create new model object from attributes
 
+    //TODO: match the parameters in insert, and model object constructors.
+    //TODO: insertVisit() - this file, visitDao.insert() - VisitDAO, new Visit() - Visit
     public Visit insertVisit(int visitID, int patientID, String comments, Java.SQL.date) {
-        return facultyDAO.insert(visitID, patientID, comments, Java.SQL.date);
+        return visitDAO.insert(visitID, patientID, comments, Java.SQL.date);
     }
 
     public Patient insertPatient(int patientID, String pname, int demographic, String email, String address) {
@@ -109,11 +113,11 @@ public class DatabaseManager {
     }
 
     public Medication insertMedication(int medID, int patientID, String med_name) {
-        return courseDAO.insert(medID, patientID, med_name);
+        return medicationDAO.insert(medID, patientID, med_name);
 
 
     public Diagnosis insertDiagnosis(int patientID, int diagnosisID, String diagnosis) {
-        return courseDAO.insert(patientID, diagnosisID, med_name);
+        return diagnosisDAO.insert(patientID, diagnosisID, med_name);
 
     }
 

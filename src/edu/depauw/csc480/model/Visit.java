@@ -12,15 +12,16 @@ import org.omg.CORBA.portable.ValueInputStream;
  */
 public class Visit{
     private VisitDAO dao;
+    private int visitID;
+
     private Patient patient;
-    private Visit visit;
     private String comments;
 
 
-    public Visit(VisitDAO dao, Visit visit, Patient patient, String comments) {
+    public Visit(VisitDAO dao, int visitID, Patient patient, String comments) {
         this.dao = dao;
+        this.visitID = visitID;
         this.patient = patient;
-        this.visit = visit;
         this.comments = comments;
     }
 
@@ -29,8 +30,8 @@ public class Visit{
         return dao + " " + ", " + " \n Comments:" + comments;
     }
 
-    public Visit getVisit() {
-        return visit;
+    public int getVisitID(){
+        return visitID;
     }
 
     public Patient getPatient() {

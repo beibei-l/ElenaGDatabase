@@ -2,7 +2,7 @@ package edu.depauw.csc480.model;
 
 import java.util.Collection;
 
-import edu.depauw.csc480.dao.DepartmentDAO;
+import edu.depauw.csc480.dao.DiagnosisDAO;
 
 /**
  * Model object for a row in the Department table.
@@ -14,40 +14,36 @@ import edu.depauw.csc480.dao.DepartmentDAO;
 public class Diagnosis {
     private DiagnosisDAO dao;
     private int diagnosisID;
-    private int patientID;
-    private String Diagnosis;
-    private Collection<Patient> patient;
+    private String diagnosis;
+    private Patient patient;
+
+    //TODO: does this mean a diagnosis has a lot of patients?
+    private Collection<Patient> patients;
     private Collection<Visit> visit;
 
-    public Diagnosis(DiagnosisDAO dao, int diagnosisID, String Diagnosis, int patientID) {
+    public Diagnosis(DiagnosisDAO dao, int diagnosisID, String diagnosis, Patient patient) {
         this.dao = dao;
         this.diagnosisID = diagnosisID;
-        this.dname = dname;
+        this.diagnosis = diagnosis;
+        this.patient = patient;
     }
 
+    //TODO:
     public String toString() {
-        return dao "," + diagnosis "," + diagnosisID "," + dname;
+        return dao + diagnosis;
     }
 
     public int getDiagnosisID() {
         return diagnosisID;
     }
 
-    pubic void setDiagnosisID(int diagnosisID)
-    {
-        this.DiagnosisID = diagnosisID;
+    public Patient getPatient(){
+        return patient;
     }
 
-    public String getPatientID()
-    {
-        return patientID;
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
-
-    public void setPatientID()
-    {
-        this.PatientID = patientID;
-    }
-
 
     public String getDiagnosis() {
         return diagnosis;
@@ -58,9 +54,10 @@ public class Diagnosis {
         this.diagnosis = diagnosis;
     }
 
-    public Collection<Patient> getPatient() {
+    //TODO: Ill check back on this later...
+    public Collection<Patient> getPatients() {
         if (patient == null) patient = dao.getPatient(patientID);
-        return patient;
+        return patients;
     }
 
     public Collection<Visit> getVisit() {

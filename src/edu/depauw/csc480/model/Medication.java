@@ -1,5 +1,6 @@
 package edu.depauw.csc480.model;
 
+import edu.depauw.csc480.dao.MedicationDAO;
 import edu.depauw.csc480.dao.VisitDAO;
 
 /**
@@ -11,45 +12,38 @@ import edu.depauw.csc480.dao.VisitDAO;
  */
 public class Medication {
     private MedicationDAO dao;
+    int medID;
     private Patient patient;
-    private int medID;
-    private int patientID;
     private String med_name;
 
 
-    public Medication(MedicationDAO dao, Patient patient, int medID, int patientId, String
-            med_name)
+    public Medication(MedicationDAO dao, int medID, Patient patient, String med_name)
     {
         this.dao = dao;
-        this.patientID = patientID;
-        this.comments = comments;
+        this.medID = medID;
+        this.patient = patient;
+        this.med_name = med_name;
     }
 
+    //TODO: Fix this.
     public String toString() {
-        return dao + " " + patientID + ": " + medID + ", " + "Comments: \n" + + med_name;
+        return "";
     }
 
-    public int MedicationID() {
+    public int getMedID(){
         return medID;
     }
 
-    public void setMedicationID(String med_name) {
-        this.MedicationID = medID;
+    public Patient getPatient() {
+        return patient;
     }
 
-
-    public int getPatientID(int patientID)
-    {
-        return patientID;
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
-    public void setPatientID()
-    {
-        this.PatientID = patientID;
-    }
-
-    public void setMed_name()
-    { this.Med_name = med_name;
+    public void setMed_name(String med_name) {
+        this.med_name = med_name;
     }
 
     public String getMed_name(){
