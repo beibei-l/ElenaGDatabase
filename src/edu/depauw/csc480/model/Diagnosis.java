@@ -55,13 +55,13 @@ public class Diagnosis {
     }
 
     //TODO: Ill check back on this later...
-    public Collection<Patient> getPatients() {
-        if (patient == null) patient = dao.getPatient(patientID);
-        return patients;
-    }
-
-    public Collection<Visit> getVisit() {
-        if (visit == null) courses = dao.getVisit(visitID);
-        return visit;
-    }
+//    public Collection<Patient> getPatients() {
+//        if (patient == null) patient = dao.getPatient(patientID);
+//        return patients;
+//    }
+//
+//    public Collection<Visit> getVisit() {
+//        if (visit == null) courses = dao.getVisit(visitID);
+//        return visit;
+//    }
 }

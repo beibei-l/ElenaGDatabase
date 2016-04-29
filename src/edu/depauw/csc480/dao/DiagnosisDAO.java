@@ -37,9 +37,10 @@ public class DiagnosisDAO {
     static void create(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
         String s = "create table DIAGNOSIS("
-                + "patientID int not null, "
-                + "diagnosisID integer not null, "
+                + "diagnosisID int not null, "
                 + "diagnosis varchar(500) not null, "
+                + "patientID int not null, "
+                + "primary key(diagnosisID))";  //Set the primary key here.
         stmt.executeUpdate(s);
     }
 
@@ -60,29 +61,27 @@ public class DiagnosisDAO {
     /**
      * Retrieve a Diagnosis object given its key.
      *
-     * @param patientID
      * @param diagnosisID
      * @return the Diagnosis object, or null if not found
      */
-    public Diagnosis find(int patientID, int diagnosisID) {
+    public Diagnosis find(int diagnosisID) {
         try {
-            String qry = "select diagnosis, diagnosisID from DIAGNOSIS where diagnosisID = ? and PatientID = ?";
+            // Primary key is diagnosisID, only need this to find the entry.
+            String qry = "select diagnosis, patientID from DIAGNOSIS where diagnosisID = ? ";
             PreparedStatement pstmt = conn.prepareStatement(qry);
-            pstmt.setInt(1, patientID);
-            pstmt.setInt(2, diagnosisID);
+            pstmt.setInt(1, diagnosisID);
             ResultSet rs = pstmt.executeQuery();
 
             // return null if diagnosis doesn't exist
             if (!rs.next())
                 return null;
 
-            String diagnosis = rs.getString("diagnosis");
-            int diagnosisID = rs.getInt("patientID");
+            String diagnosisContent = rs.getString("diagnosis");
+            int patientID = rs.getInt("patientID");
             rs.close();
 
-            Visit visit = dbm.find(visitID);
             Patient patient = dbm.findPatient(patientID);
-            Diagnosis diagnosis = new Diagnosis(this, diagnosisID, patientID, diagnosis);
+            Diagnosis diagnosis = new Diagnosis(this, diagnosisID, diagnosisContent, patient);
 
             return diagnosis;
         } catch (SQLException e) {
@@ -94,28 +93,28 @@ public class DiagnosisDAO {
     /**
      * Add a new Diagnosis with the given attributes.
      *
-     * @param patientID
      * @param diagnosisID
-     * @param diagnosis
+     * @param diagnosisContent
+     * @param patient
      * @return the new Diagnosis object, or null if key already exists
      */
 
 
-    public Diagnosis insert(int diagnosisID, int patientID, String diagnosis) {
+    public Diagnosis insert(int diagnosisID, String diagnosisContent, Patient patient) {
         try {
             // make sure that the diagnosis, diagnosisID pair is currently unused
-            if (find(diagnosis.getDiagnosisID(), num) != null)
+            if (find(diagnosisID) != null)
                 return null;
 
-            String cmd = "insert into DIAGNOSIS(diagnosisID, patientID, diagnosis) "
-                    + "values(?, ?, ?, ?)";
+            String cmd = "insert into DIAGNOSIS(diagnosisID, diagnosis, patientID) "
+                    + "values(?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(cmd);
-            pstmt.setInt(1, .getDiagnosisID());
-            pstmt.setInt(2, patientID;
-            pstmt.setString(3, diagnosis);
+            pstmt.setInt(1, diagnosisID);
+            pstmt.setString(2, diagnosisContent);
+            pstmt.setInt(3, patient.getPatientID());
             pstmt.executeUpdate();
 
-            Diagnosis diagnosis = new Diagnosis(this, diagnosisID, patientID, diagnosis);
+            Diagnosis diagnosis = new Diagnosis(this, diagnosisID, diagnosisContent, patient);
 
             return diagnosis;
         } catch (SQLException e) {
@@ -128,22 +127,21 @@ public class DiagnosisDAO {
      * Diagnosis was changed in the model object, so propagate the change to the
      * database.
      *
-     * @param patientID
      * @param diagnosisID
-     * @param diagnosis
+     * @param diagnosisContent
      */
-    public void changeDiagnosis(int diagnosisID, int patientID, String diagnosis) {
+    public void changeDiagnosis(int diagnosisID, String diagnosisContent) {
         try {
-            String cmd = "update DIAGNOSIS set diagnosis = ? where patientID = ? and  diagnosisID = ?";
+            String cmd = "update DIAGNOSIS set diagnosis = ? where diagnosisID = ?";
             PreparedStatement pstmt = conn.prepareStatement(cmd);
-            pstmt.setString(1, diagnosis);
-            pstmt.setInt(2, diagnosis.getPatientID());
-            pstmt.setInt(3, diagnosisID);
+            pstmt.setString(1, diagnosisContent);
+            pstmt.setInt(2, diagnosisID);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             dbm.cleanup();
             throw new RuntimeException("error changing diagnosis", e);
         }
+    }
 
         /**
          * Clear all data from the Diagnosis table.
