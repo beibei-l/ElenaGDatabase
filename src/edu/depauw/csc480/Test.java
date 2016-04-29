@@ -22,7 +22,7 @@ public class Test {
      */
     public static void main(String[] args) {
         DatabaseManager dbm = new DatabaseManager();
-
+        System.out.println("111111");
         dbm.clearTables();
 
         Patient amy = dbm.insertPatient(1, "Amy Brown", "414 S. Indiana St.", 1, "amybrown@gmail.com");

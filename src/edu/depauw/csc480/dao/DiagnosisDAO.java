@@ -53,7 +53,7 @@ public class DiagnosisDAO {
      */
     static void addConstraints(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
-        String s = "alter table DIAGNOSIS add constraint fk_patientID "
+        String s = "alter table DIAGNOSIS add constraint fk_diagnosispatient "
                 + "foreign key(patientID) references PATIENT on delete cascade";
         stmt.executeUpdate(s);
     }

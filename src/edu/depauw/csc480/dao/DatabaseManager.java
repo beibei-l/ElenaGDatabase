@@ -24,6 +24,7 @@ import edu.depauw.csc480.model.Diagnosis;
 public class DatabaseManager {
     private Driver driver;
     private Connection conn;
+
     private PatientDAO patientDAO;
     private VisitDAO visitDAO;
     private MedicationDAO medicationDAO;
@@ -49,6 +50,9 @@ public class DatabaseManager {
                 conn = driver.connect(url, prop);
                 conn.setAutoCommit(false);
                 create(conn);
+
+                System.out.println("Connection created successfully");
+
             }
             catch (SQLException e2) {
                 throw new RuntimeException("cannot connect to database", e2);
@@ -193,10 +197,12 @@ public class DatabaseManager {
             // This is not as straightforward as it may seem, because
             // of the cyclic foreign keys -- I had to play with
             // "on delete set null" and "on delete cascade" for a bit
-            patientDAO.clear();
-            visitDAO.clear();
+
+
             medicationDAO.clear();
             diagnosisDAO.clear();
+            patientDAO.clear();
+            visitDAO.clear();
         } catch (SQLException e) {
             throw new RuntimeException("cannot clear tables", e);
         }

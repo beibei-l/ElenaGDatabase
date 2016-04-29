@@ -44,7 +44,7 @@ public class PatientDAO {
                 + "address varchar(500) not null, "
                 + "demographic int not null, "
                 + "email varchar(100) not null,"
-                + "primary key(patientId))";
+                + "primary key(patientID))";
         stmt.executeUpdate(s);
     }
 
@@ -103,7 +103,8 @@ public class PatientDAO {
      */
     public Patient findByName(String patientName) {
         try {
-            String qry = "select patientID, address, demographic, email from PATIENT where patientName = ?"; //TODO: What if the patient name is repetitive?
+            //TODO: What if the patient name is repetitive?
+            String qry = "select patientID, address, demographic, email from PATIENT where patientName = ?";
             PreparedStatement pstmt = conn.prepareStatement(qry);
             pstmt.setString(1, patientName);
             ResultSet rs = pstmt.executeQuery();

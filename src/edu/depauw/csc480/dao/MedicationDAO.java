@@ -36,7 +36,7 @@ public class MedicationDAO {
     static void create(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
         String s = "create table MEDICATION("
-                + "medID not null, "
+                + "medID int not null, "
                 + "med_name varchar(100) not null, "
                 + "patientID int not null, "
                 + "primary key(medID))";
@@ -52,7 +52,7 @@ public class MedicationDAO {
      */
     static void addConstraints(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
-        String s = "alter table MEDICATION add constraint fk_medID "
+        String s = "alter table MEDICATION add constraint fk_medpatient "
                 + "foreign key(patientID) references PATIENT";
         stmt.executeUpdate(s);
     }

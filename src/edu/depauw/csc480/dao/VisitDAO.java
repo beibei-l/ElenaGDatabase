@@ -36,9 +36,9 @@ public class VisitDAO {
         String s = "create table VISIT("
                 + "visitID int not null, "
                 + "visit_date DATE not null, "
-                + "visit_time TIME not null"
-                + "comments varchar(1000) not null"
-                + "patientID not null, "
+                + "visit_time TIME not null,"
+                + "comments varchar(1000) not null,"
+                + "patientID int not null, "
                 + "primary key(visitID))";
         stmt.executeUpdate(s);
     }
@@ -52,7 +52,7 @@ public class VisitDAO {
      */
     static void addConstraints(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
-        String s = "alter table VISIT add constraint fk_patientID"
+        String s = "alter table VISIT add constraint fk_visitpatient "
                 + "foreign key(patientID) references PATIENT on delete cascade";
         stmt.executeUpdate(s);
     }
