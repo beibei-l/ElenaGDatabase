@@ -185,4 +185,17 @@ public class MedicationDAO {
         String s = "delete from MEDICATION";
         stmt.executeUpdate(s);
     }
+
+    public void changeMed_name(int medID, String med_name) {
+        try {
+            String cmd = "update MEDICATION set med_name = ? where medID = ?";
+            PreparedStatement pstmt = conn.prepareStatement(cmd);
+            pstmt.setString(1, med_name);
+            pstmt.setInt(2, medID);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            dbm.cleanup();
+            throw new RuntimeException("error changing medication name", e);
+        }
+    }
 }

@@ -42,8 +42,12 @@ public class Medication {
         this.patient = patient;
     }
 
+    //TODO: All the setters need to update in dao. I only set this one as an example.. need to update the others.
+    // look at medDao - changeMed_name function...
     public void setMed_name(String med_name) {
         this.med_name = med_name;
+        dao.changeMed_name(medID, med_name);
+
     }
 
     public String getMed_name(){
