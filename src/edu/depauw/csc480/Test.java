@@ -2,6 +2,7 @@ package edu.depauw.csc480;
 
 import java.util.Collection;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import edu.depauw.csc480.dao.DatabaseManager;
 import edu.depauw.csc480.model.Patient;
@@ -24,44 +25,30 @@ public class Test {
 
         dbm.clearTables();
 
-        // department heads are set to null for now; see below
-        Diagnosis cancer = dbm.insertDiagnosis(5, "Cancer", null);
-        Diagnosis ebola = dbm.insertDiagnosist(8, "Ebola", null);
-        Diagnosis asthma = dbm.insertDiagnosis(10, "Asthma", null);
+        Patient amy = dbm.insertPatient(1, "Amy Brown", "414 S. Indiana St.", 1, "amybrown@gmail.com");
+//        Patient John = dbm.insertPatient(2345, "John Green", "1010 Bloomington St.");
+//        Patient Cheslea = dbm.insertPatient(3456, "Chelsea Furtner", "42 Druley Lane");
+//        Patient Kate = dbm.insertPatient(4567, "Kate Richter", "813 Washington Ave");
+//        Patient Jake = dbm.insertPatient(5678, "Jake Johnson", "313 Jackson St.");
 
-        Patient Amy = dbm.insertPatient(1234, "Amy Brown", "414 S. Indiana St.");
-        Patient John = dbm.insertPatient(2345, "John Green", "1010 Bloomington St.");
-        Patient Cheslea = dbm.insertPatient(3456, "Chelsea Furtner", "42 Druley Lane");
-        Patient Kate = dbm.insertPatient(4567, "Kate Richter", "813 Washington Ave");
-        Patient Jake = dbm.insertPatient(5678, "Jake Johnson", "313 Jackson St.");
-        dbm.insertPatient= dbm (6789, "Eric Brunssels", "542 Winter Circle");
+        //AMY got everything...
+        Diagnosis cancer = dbm.insertDiagnosis(5, "Cancer", amy);
+        Diagnosis ebola = dbm.insertDiagnosis(8, "Ebola", amy);
+        Diagnosis asthma = dbm.insertDiagnosis(10, "Asthma", amy);
 
-        // Have to set department heads after creating faculty,
-        // because faculty need to refer to departments (cycle in foreign keys)
-        cancer.setDiagnosis(Amy);
-        ebola.setDiagnosis(John);
-        asthma.setDiagnosis(Chelsea);
-
-        dbm.insertVisit(new Timestamp(System.currentTimeMillis()), 131);
-        dbm.insertVisit(310, "12/17/15", 1:30pm);
-        dbm.insertVisit(311, "12/17/15", 2:30pm);
-        dbm.insertVisit(350, "12/31/15", 10:00am);
-        dbm.insertVisit(360, "1/6/16", 3:00pm);
-        dbm.insertVisit(380, "1/10/16", 12:45pm);
-        dbm.insertVisit(400, "1/12/16", 1:00pm);
-        dbm.insertVisit(410, "1/15/16", 1:45pm);
+        //Set up a new visit for Amy..
+        Visit visit1 = dbm.insertVisit(1, new Date(), new java.sql.Time(new java.util.Date().getTime()), "new patient visit", amy);
 
         dbm.commit();
 
         // Now retrieve a table of MathCS faculty and their courses;
         // each course also lists the head of the department offering the course
-        Collection<Visit> visit = visit.getVisit();
-        for (Visit visit : Visit) {
+        Collection<Visit> visits = amy.getVisits();
+        for (Visit visit : visits) {
             System.out.println(visit);
-            Collection<Course> visit = visit.getVisit();
-            for (Visit c : visit) {
-                System.out.println("Pname" + p + " [Pname: " + p.getPatient().getVisit() + "]");
-            }
+            System.out.println("Patient Name:" + visit.getPatient().getPname() +
+                                "Visit:" + visit.toString());
+
         }
 
         dbm.commit();
@@ -70,4 +57,5 @@ public class Test {
 
         System.out.println("Done");
     }
+}
 

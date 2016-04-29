@@ -3,6 +3,8 @@ package edu.depauw.csc480.dao;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.util.Date;
 import java.util.Properties;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
@@ -70,7 +72,7 @@ public class DatabaseManager {
         VisitDAO.create(conn);
         MedicationDAO.create(conn);
         DiagnosisDAO.create(conn);
-        PatientDAO.addConstraints(conn);
+//        PatientDAO.addConstraints(conn);
         VisitDAO.addConstraints(conn);
         MedicationDAO.addConstraints(conn);
         DiagnosisDAO.addConstraints(conn);
@@ -84,6 +86,9 @@ public class DatabaseManager {
     public Patient findPatient(int patientID) {
         return patientDAO.find(patientID);
     }
+    public Patient findPatientByName(String patientName) {
+        return patientDAO.findByName(patientName);
+    }
 
     public Visit findVisit(int visitID) {
         return visitDAO.find(visitID);
@@ -92,11 +97,17 @@ public class DatabaseManager {
     public Medication findMedication(int medId) {
         return medicationDAO.find(medId);
     }
-
-    //TODO: need a find by name method in DiagnosisDao class.
-    public Diagnosis findDiagnosisByName(String dname) {
-        return diagnosisDAO.findByName(dname);
+    public Medication findMedicationByName(String medication_name) {
+        return medicationDAO.findByName(medication_name);
     }
+
+    public Diagnosis findDiagnosis(int diagnosisID) {
+        return diagnosisDAO.find(diagnosisID);
+    }
+    //TODO: need a find by name method in DiagnosisDao class.
+//    public Diagnosis findDiagnosisByName(String dname) {
+//        return diagnosisDAO.findByName(dname);
+////    }
 
 
     //***************************************************************
@@ -104,20 +115,23 @@ public class DatabaseManager {
 
     //TODO: match the parameters in insert, and model object constructors.
     //TODO: insertVisit() - this file, visitDao.insert() - VisitDAO, new Visit() - Visit
-    public Visit insertVisit(int visitID, int patientID, String comments, Java.SQL.date) {
-        return visitDAO.insert(visitID, patientID, comments, Java.SQL.date);
+//    Visit(this, visitID, visit_date, visit_time, comments, patient);
+    public Visit insertVisit(int visitID, Date visit_date, Time visit_time, String comments, Patient patient) {
+        java.sql.Date  sql_visit_date = new java.sql.Date(visit_date.getDate()); //convert util.Date to sql.Date
+        java.sql.Time sql_visit_time = new java.sql.Time(visit_time.getTime());
+
+        return visitDAO.insert(visitID, sql_visit_date, sql_visit_time, comments, patient);
+    }
+    public Patient insertPatient(int patientID, String pname, String address, int demographic, String email) {
+        return patientDAO.insert(patientID, pname, address, demographic, email);
     }
 
-    public Patient insertPatient(int patientID, String pname, int demographic, String email, String address) {
-        return patientDAO.insert(patientID, pname, demographic, email, address);
+    public Medication insertMedication(int medID, String med_name, Patient patient) {
+        return medicationDAO.insert(medID, med_name, patient);
     }
 
-    public Medication insertMedication(int medID, int patientID, String med_name) {
-        return medicationDAO.insert(medID, patientID, med_name);
-
-
-    public Diagnosis insertDiagnosis(int patientID, int diagnosisID, String diagnosis) {
-        return diagnosisDAO.insert(patientID, diagnosisID, med_name);
+    public Diagnosis insertDiagnosis(int diagnosisID, String diagnosisContent, Patient patient) {
+        return diagnosisDAO.insert(diagnosisID, diagnosisContent, patient);
 
     }
 

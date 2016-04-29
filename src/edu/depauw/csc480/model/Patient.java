@@ -15,15 +15,21 @@ public class Patient {
     private PatientDAO dao;
     private int patientID;
     private String pname;
+    private String address;
     private String email;
     private int demographic;
 
+    private Collection<Visit> visits;   // Need one of this...
+    private Collection<Diagnosis> diagnoses;
+    private Collection<Medication> medications;
 
-    public Patient(PatientDAO dao, int patientID, String pname, String email, int demographic) {
+    // patientId patientName address demographic email
+    public Patient(PatientDAO dao, int patientID, String pname, String address, int demographic, String email) {
         this.dao = dao;
         this.patientID = patientID;
         this.pname = pname;
         this.email = email;
+        this.address = address;
         this.demographic = demographic;
     }
 
@@ -52,22 +58,7 @@ public class Patient {
         return email;
     }
 
-//    public void setVisit(Visit vis)
-//    {
-//        this.vis = vis;
-//        dao.changeVisit(patientID, visitID);
-//    }
-//
-//    public void getVisit(Visit vis)
-//    {
-//        Collection<Visits> getVisit()
-//        {
-//            if(courses == null) courses = dao.getVisits(visitID);
-//            return visit;
-//        }
-//    }
-    //TODO: Add address to the constructor?
-    public int getAddress()
+    public String getAddress()
     {
         return address;
     }
@@ -77,8 +68,7 @@ public class Patient {
         this.address = address;
     }
 
-    public void setDemographic(int demographic)
-    {   this.demographic = demographic;
+    public void setDemographic(int demographic) {   this.demographic = demographic;
     }
 
     public int getDemographic()
@@ -86,10 +76,22 @@ public class Patient {
         return demographic;
     }
 
-    //TODO: Patient has Visits? Should I add to the Patient constructor?
-    public Collection<Visit> getVisit() {
-        if (visit == null)
-            courses = dao.getVisit(VisitID);
-        return visit;
+    public Collection<Visit> getVisits() {
+        if (visits == null)
+            visits = dao.getVisits(patientID);
+        //TODO: Add this in UserDao, use patientID to find visits(Visit table should have a patientID as foreign key.)
+        return visits;
+    }
+
+    public Collection<Diagnosis> getDiagnoses(){
+        if (diagnoses == null)
+            diagnoses = dao.getDiagnoses(patientID);
+        return diagnoses;
+    }
+
+    public Collection<Medication> getMedications(){
+        if (medications == null)
+            medications = dao.getMedications(patientID);
+        return medications;
     }
 }

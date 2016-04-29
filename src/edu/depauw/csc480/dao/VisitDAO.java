@@ -1,10 +1,6 @@
 package edu.depauw.csc480.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -37,12 +33,13 @@ public class VisitDAO {
      */
     static void create(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
-        String s = "create table Visit("
-                + "visitId int not null, "
+        String s = "create table VISIT("
+                + "visitID int not null, "
+                + "visit_date DATE not null, "
+                + "visit_time TIME not null"
+                + "comments varchar(1000) not null"
                 + "patientID not null, "
-                + "visit_date timestamp not null";
-        + "visit_time timestamp not null";
-        + "comments varchar(1000) not null";
+                + "primary key(visitID))";
         stmt.executeUpdate(s);
     }
 
@@ -55,7 +52,7 @@ public class VisitDAO {
      */
     static void addConstraints(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
-        String s = "alter table Visit add constraint fk_patientID"
+        String s = "alter table VISIT add constraint fk_patientID"
                 + "foreign key(patientID) references PATIENT on delete cascade";
         stmt.executeUpdate(s);
     }
@@ -69,7 +66,7 @@ public class VisitDAO {
      */
     public Visit find(int visitID) {
         try {
-            String qry = "select visit_date from Visit where visitID = ?";
+            String qry = "select visit_date, visit_time, comments, patientID from Visit where visitID = ?";
             PreparedStatement pstmt = conn.prepareStatement(qry);
             pstmt.setInt(1, visitID);
             ResultSet rs = pstmt.executeQuery();
@@ -78,162 +75,118 @@ public class VisitDAO {
             if (!rs.next())
                 return null;
 
-            String dname = rs.getString("visit_date");
+            Date visit_date = rs.getDate("visit_date");
+            Time visit_time = rs.getTime("visit_time");
+            String comments = rs.getString("comments");
+            int patientID = rs.getInt("patientID");
             rs.close();
 
-            Visit visit = new Visit(this, visitID, visit_date);
+            Patient patient = dbm.findPatient(patientID);
+            Visit visit = new Visit(this, visitID, visit_date, visit_time, comments, patient);
 
             return visit;
         } catch (SQLException e) {
             dbm.cleanup();
-            throw new RuntimeException("error finding  Visit ID", e);
+            throw new RuntimeException("error finding visit", e);
         }
     }
 
-    /**
-     * Retrieve a Visit object by name. Similar to find(visitID), except it
-     * searches by name.
-     *
-     * @param dname
-     * @return the Department object, or null if not found
-     */
-    public Department findByName(int patientID) {
-        try {
-            String qry = "select patientID from Visit where visitID = ?";
-            PreparedStatement pstmt = conn.prepareStatement(qry);
-            pstmt.setString(1, patientID);
-            ResultSet rs = pstmt.executeQuery();
-
-            // return null if department doesn't exist
-            if (!rs.next())
-                return null;
-
-            int deptid = rs.getInt("patientID");
-            rs.close();
-
-            Visit visit = new Visit(this, visitID, patientID);
-
-            return visit;
-        } catch (SQLException e) {
-            dbm.cleanup();
-            throw new RuntimeException("error finding Visit by Patient ID", e);
-        }
-    }
+    //TODO: this should be in the PatientDAO?
+//    /**
+//     * Retrieve a Visit object by name. Similar to find(visitID), except it
+//     * searches by name.
+//     *
+//     * @return the Department object, or null if not found
+//     */
+//    public Department findByName(int patientID) {
+//        try {
+//            String qry = "select patientID from Visit where visitID = ?";
+//            PreparedStatement pstmt = conn.prepareStatement(qry);
+//            pstmt.setString(1, patientID);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            // return null if department doesn't exist
+//            if (!rs.next())
+//                return null;
+//
+//            int deptid = rs.getInt("patientID");
+//            rs.close();
+//
+//            Visit visit = new Visit(this, visitID, patientID);
+//
+//            return visit;
+//        } catch (SQLException e) {
+//            dbm.cleanup();
+//            throw new RuntimeException("error finding Visit by Patient ID", e);
+//        }
+//    }
 
     /**
      * Add a new Visit with the given attributes.
      *
-     * @param patientID
      * @param visitID
-     * @param visit_dame
-     * @return the new Department object, or null if key already exists
+     * @param visit_date
+     * @param visit_time
+     * @param comments
+     * @param patient
+     * @return the new Visit object, or null if key already exists
      */
-    public Visit insert(int visitID, String comments, int patientID) {
+    public Visit insert(int visitID, Date visit_date, Time visit_time, String comments, Patient patient) {
         try {
-            // make sure that the deptid is currently unused
-            if (find(deptid) != null)
+            // make sure that the visitID is currently unused
+            if (find(visitID) != null)
                 return null;
 
-            String cmd = "insert into VISIT(patientID, visitID, visit_date) "
-                    + "values(?, ?, ?)";
+            String cmd = "insert into VISIT(visitID, visit_date, visit_time, comments, patientID) "
+                    + "values(?, ?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(cmd);
-            pstmt.setInt(1, patientID);
-            pstmt.setString(2, visitID);
-            if (head != null) {
-                // special handling because the head might be null
-                pstmt.setInt(3, visit_date.getVisitID());
-            } else {
-                pstmt.setNull(3, java.sql.Types.INTEGER);
-            }
+
+            java.sql.Date  sql_visit_date = new java.sql.Date(visit_date.getDate()); //convert util.Date to sql.Date
+            java.sql.Time sql_visit_time = new java.sql.Time(visit_time.getTime());
+
+            pstmt.setInt(1, visitID);
+            pstmt.setDate(2, sql_visit_date);
+            pstmt.setTime(3, sql_visit_time);
+            pstmt.setString(4, comments);
+            pstmt.setInt(5, patient.getPatientID());
+
             pstmt.executeUpdate();
 
-            Patient patient = new Patient(this, patientID, visitID, visit_date);
+            Visit visit = new Visit(this, visitID, visit_date, visit_time, comments, patient);
 
-            return department;
+            return visit;
         } catch (SQLException e) {
             dbm.cleanup();
             throw new RuntimeException("error inserting new Visit", e);
         }
     }
 
-    /**
-     * Visit date was changed in the model object, so propagate the change to the
-     * database.
-     *
-     * @param visitID
-     * @param visit_date
-     *
-     */
-    public void changeVisit_date(int visitID, Visit visit_date) {
-        try {
-            String cmd = "update Visit set Visit_date = ? where VisitID = ?";
-            PreparedStatement pstmt = conn.prepareStatement(cmd);
-            if (head != null) {
-                // special handling because the head might be null
-                pstmt.setInt(1, visit_date.getVisitID());
-            } else {
-                pstmt.setNull(1, java.sql.Types.INTEGER);
-            }
-            pstmt.setInt(2, visitID);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            dbm.cleanup();
-            throw new RuntimeException("error changing Visit_date", e);
-        }
-    }
-
-    /**
-     * Retrieve a Collection of all Visits for a speicifc patient. Backwards
-     * direction of patientID foreign key from Faculty.
-     *
-     * @param patientID
-     * @return the Collection
-     */
-    public Collection<Visit> getVisit(int visitID) {
-        try {
-            Collection<Visit> visit = new ArrayList<Visit>();
-            String qry = "select visitID from PATIENT where patientID = ?";
-            PreparedStatement pstmt = conn.prepareStatement(qry);
-            pstmt.setInt(1, patientID);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int visitID = rs.getInt("visitID");
-                patient.add(dbm.findPatient(patientID));
-            }
-            rs.close();
-            return visitID;
-        } catch (SQLException e) {
-            dbm.cleanup();
-            throw new RuntimeException("error getting Patient visits", e);
-        }
-    }
-
-    /**
-     * Retrieve a Collection of all Visits for a specific patient.
-     * Backwards direction of Dept foreign key from Course.
-     *
-     * @param deptid
-     * @return the Collection
-     */
-    public Collection<Visit> getVisit(int visitID) {
-        try {
-            Collection<Visit> courses = new ArrayList<Visit>();
-            String qry = "select  from Visit where VisitID = ?";
-            PreparedStatement pstmt = conn.prepareStatement(qry);
-            pstmt.setInt(1, visitID);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int num = rs.getInt("patienID");
-                courses.add(dbm.findCourse(visitID, patientID));
-            }
-            rs.close();
-            return visits;
-        } catch (SQLException e) {
-            dbm.cleanup();
-            throw new RuntimeException("error getting patient visits", e);
-        }
-    }
-
+    //TODO:....Um.. Later.
+//    /**
+//     * Visit date was changed in the model object, so propagate the change to the
+//     * database.
+//     *
+//     * @param visitID
+//     * @param visit_date
+//     *
+//     */
+//    public void changeVisit_date(int visitID, Visit visit_date) {
+//        try {
+//            String cmd = "update Visit set visit_date = ? where VisitID = ?";
+//            PreparedStatement pstmt = conn.prepareStatement(cmd);
+//            if (head != null) {
+//                // special handling because the head might be null
+//                pstmt.setInt(1, visit_date.getVisitID());
+//            } else {
+//                pstmt.setNull(1, java.sql.Types.INTEGER);
+//            }
+//            pstmt.setInt(2, visitID);
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            dbm.cleanup();
+//            throw new RuntimeException("error changing Visit_date", e);
+//        }
+//    }
 
 
     /**
@@ -243,7 +196,7 @@ public class VisitDAO {
      */
     void clear() throws SQLException {
         Statement stmt = conn.createStatement();
-        String s = "delete from Visit";
+        String s = "delete from VISIT";
         stmt.executeUpdate(s);
     }
 }

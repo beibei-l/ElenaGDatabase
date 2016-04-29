@@ -17,7 +17,7 @@ public class Medication {
     private String med_name;
 
 
-    public Medication(MedicationDAO dao, int medID, Patient patient, String med_name)
+    public Medication(MedicationDAO dao, int medID, String med_name, Patient patient)
     {
         this.dao = dao;
         this.medID = medID;
